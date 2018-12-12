@@ -14,4 +14,8 @@ Observações sobre o projeto:
 
 5 - O pagamento do funcionario que escolher a Agenda "mensal $" será feita após 20 dias de trabalho, no dia especificado, pois tive dificuldade em definir o útilmo dia util do mês;
 
-6 - O salário fixado dos comissionados foi definido como R$ 238.5 por semana, que corresponde a 1/4 do salário mínimo atual (R$ 954,00).
+6 - O salário fixado dos comissionados foi definido como R$ 238.5 por semana, que corresponde a 1/4 do salário mínimo atual (R$ 954,00);
+
+7 - Não consegui implementar o "Undo" para as operações de adicionar taxa de serviço, mudar informaçoes e rodar folha de pagamento;
+
+8 - Não consegui implementar o "Redo".
