@@ -12,7 +12,7 @@ public class Main {
         System.out.print("\nWelcome!\n");
         dataCenter.print_date();
 
-        while(op != 13)
+        while(op != 12)
         {
             System.out.print("\nWhat do you want to do?\n");
             System.out.print("1 - Add a Worker to the Company\n");
@@ -23,11 +23,10 @@ public class Main {
             System.out.print("6 - Change Worker's Information\n");
             System.out.print("7 - Run Payroll\n");
             System.out.print("8 - Undo\n");
-            System.out.print("9 - Redo\n");
-            System.out.print("10 - Change Payment Schedule\n");
-            System.out.print("11 - Create a Payment Schedule\n");
-            System.out.print("12 - Pass day\n");
-            System.out.print("13 - Turn off the System (Stop Program)\n");
+            System.out.print("9 - Change Payment Schedule\n");
+            System.out.print("10 - Create a Payment Schedule\n");
+            System.out.print("11 - Pass day\n");
+            System.out.print("12 - Turn off the System (Stop Program)\n");
             op = Integer.parseInt(input.nextLine());
 
             if(op == 1) dataCenter.add_worker();
@@ -44,7 +43,13 @@ public class Main {
 
             if(op == 7) dataCenter.PayRoll();
 
-            if(op == 12) dataCenter.pass_day();
+            if(op == 8) dataCenter.Undo();
+
+            if(op == 9) dataCenter.ChangeAgenda();
+
+            if(op == 10) dataCenter.CreateAgenda();
+
+            if(op == 11) dataCenter.pass_day();
 
         }
 

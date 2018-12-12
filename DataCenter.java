@@ -1,3 +1,4 @@
+import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -92,6 +93,8 @@ public class DataCenter {
                 Salaried newWorker = new Salaried(name, address, salary, Current_ID, payment_method, syndicate, Agendas.get(0));
                 Salarieds.add(newWorker);
                 Salaried_names.add(name);
+                operations.addSalaried(newWorker);
+                operations.addOperation("Add_Salaried");
             }
 
             else if(type == 3)
@@ -102,6 +105,8 @@ public class DataCenter {
                 Commissioned newWorker = new Commissioned(name, address, fixed_weekly_salary, commission, Current_ID, syndicate, payment_method, Agendas.get(2));
                 Commissioneds.add(newWorker);
                 Commissioned_names.add(name);
+                operations.addCommissioned(newWorker);
+                operations.addOperation("Add_Commissioned");
             }
 
             Workers_names.add(name);
@@ -142,22 +147,31 @@ public class DataCenter {
             if(Hourly_names.contains(name))
             {
                 int worker_index = Hourly_names.indexOf(name);
-                Hourlys.remove(worker_index);
+                Hourly worker = Hourlys.get(worker_index);
+                Hourlys.remove(worker);
                 Hourly_names.remove(name);
+                operations.removeHourly(worker);
+                operations.addOperation("Remove_Hourly");
             }
 
             else if(Commissioned_names.contains(name))
             {
                 int worker_index = Commissioned_names.indexOf(name);
-                Commissioneds.remove(worker_index);
+                Commissioned worker = Commissioneds.get(worker_index);
+                Commissioneds.remove(worker);
                 Commissioned_names.remove(name);
+                operations.removeCommissioned(worker);
+                operations.addOperation("Remove_Commissioned");
             }
 
             else if(Salaried_names.contains(name))
             {
                 int worker_index = Salaried_names.indexOf(name);
-                Salarieds.remove(worker_index);
+                Salaried worker = Salarieds.get(worker_index);
+                Salarieds.remove(worker);
                 Salaried_names.remove(name);
+                operations.removeSalaried(worker);
+                operations.addOperation("Remove_Salaried");
             }
 
             Workers_names.remove(name);
@@ -257,6 +271,8 @@ public class DataCenter {
 
         TimeCard pointCard = new TimeCard(worker, e_h, e_m, l_h, l_m, calendar.get(GregorianCalendar.DAY_OF_WEEK), calendar.get(GregorianCalendar.DAY_OF_MONTH), calendar.get(GregorianCalendar.MONTH) + 1, calendar.get(GregorianCalendar.YEAR));
         worker.addTimecard(pointCard);
+        operations.castTC(pointCard);
+        operations.addOperation("Cast_Time_Card");
 
         System.out.print("\nDone!\n");
         System.out.print("\nReturning to the Main Menu!\n");
@@ -294,6 +310,8 @@ public class DataCenter {
 
         Sale sale = new Sale(worker, price, calendar.get(GregorianCalendar.DAY_OF_MONTH), calendar.get(GregorianCalendar.MONTH), calendar.get(GregorianCalendar.YEAR));
         worker.addSale(sale);
+        operations.castSale(sale);
+        operations.addOperation("Cast_Sale");
 
         System.out.print("\nDone!\n");
         System.out.print("\nReturning to the Main Menu!\n");
@@ -437,19 +455,45 @@ public class DataCenter {
             return;
         }
 
-        
+        int index, test = 0;
+
+        Hourly worker_h = new Hourly();
+        Commissioned worker_c = new Commissioned();
+        Salaried worker_s = new Salaried();
+
+        if(Hourly_names.contains(name))
+        {
+            index = Hourly_names.indexOf(name);
+            worker_h = Hourlys.get(index);
+            test = 1;
+        }
+
+        else if(Salaried_names.contains(name))
+        {
+            index = Salaried_names.indexOf(name);
+            worker_s = Salarieds.get(index);
+            test = 2;
+        }
+
+        else
+        {
+            index = Commissioned_names.indexOf(name);
+            worker_c = Commissioneds.get(index);
+            test = 3;
+        }
 
         int op = 0;
+        reop = 1;
 
         System.out.print("\nWhat Information do you want to change?\n");
-        System.out.print("1 - Name");
-        System.out.print("2 - Address");
-        System.out.print("3 - Type");
-        System.out.print("4 - Payment Method");
-        System.out.print("5 - If is member a Union Member");
-        System.out.print("6 - Syndicate ID");
-        System.out.print("7 - Union Fee");
-        System.out.print("8 - None (Return to the Main Menu)");
+        System.out.print("1 - Name\n");
+        System.out.print("2 - Address\n");
+        System.out.print("3 - Type\n");
+        System.out.print("4 - Payment Method\n");
+        System.out.print("5 - If is member a Union Member\n");
+        System.out.print("6 - Syndicate ID\n");
+        System.out.print("7 - Union Fee\n");
+        System.out.print("8 - None (Return to the Main Menu)\n");
         op = Integer.parseInt(input.nextLine());
 
         if(op == 1)
@@ -457,9 +501,411 @@ public class DataCenter {
             System.out.print("Please, enter the Worker's new name: ");
             String new_name = input.nextLine();
 
+            if(test == 1)
+            {
+                while(Hourly_names.contains(new_name) && reop == 1)
+                {
+                    System.out.print("\nName already registered!\n");
+                    reop = this.tryAgain();
 
+                    if(reop == 1)
+                    {
+                        System.out.print("Please, enter the Worker's new name: ");
+                        new_name = input.nextLine();
+                    }
+                }
+
+                if(reop == 2)
+                {
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                worker_h.setName(new_name);
+            }
+
+            if(test == 2)
+            {
+                while(Salaried_names.contains(new_name) && reop == 1)
+                {
+                    System.out.print("\nName already registered!\n");
+                    reop = this.tryAgain();
+
+                    if(reop == 1)
+                    {
+                        System.out.print("Please, enter the Worker's new name: ");
+                        new_name = input.nextLine();
+                    }
+                }
+
+                if(reop == 2)
+                {
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                worker_s.setName(new_name);
+            }
+
+            if(test == 3)
+            {
+                while(Commissioned_names.contains(new_name) && reop == 1)
+                {
+                    System.out.print("\nName already registered!\n");
+                    reop = this.tryAgain();
+
+                    if(reop == 1)
+                    {
+                        System.out.print("Please, enter the Worker's new name: ");
+                        new_name = input.nextLine();
+                    }
+                }
+
+                if(reop == 2)
+                {
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                worker_c.setName(new_name);
+            }
+
+            System.out.print("\nInformation Changed!\n");
         }
 
+        if(op == 2)
+        {
+            System.out.print("Please, enter the Worker's new Address: ");
+            String newAddress = input.nextLine();
+
+            if(test == 1) worker_h.setAddress(newAddress);
+            if(test == 2) worker_s.setAddress(newAddress);
+            if(test == 3) worker_c.setAddress(newAddress);
+
+            System.out.print("\nInformation Changed!\n");
+        }
+
+        if(op == 3)
+        {
+            if(test == 1)
+            {
+                if(worker_h.getWorked_days() != 0)
+                {
+                    System.out.print("\nThe Worker must be payed before change his type!\n");
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                System.out.print("\nWorker is a Hourly Worker, change to:\n");
+                System.out.print("1 - Salaried\n");
+                System.out.print("2 - Commissioned\n");
+                int change = Integer.parseInt(input.nextLine());
+
+                String name1 = worker_h.getName();
+                String address = worker_h.getAddress();
+                String method = worker_h.getMethod();
+                int systemID = worker_h.getSystemID();
+                boolean syndicate = worker_h.getSyndicate();
+                int syndicateID = worker_h.getSyndicateID();
+                double fee = worker_h.getUnion_fee();
+
+                if(change == 1)
+                {
+                    System.out.print("Please, enter the Worker's new Salary: ");
+                    double salary = Double.parseDouble(input.nextLine());
+
+                    Salaried New = new Salaried(name1, address, salary, systemID, method, syndicate, Agendas.get(0), syndicateID, fee);
+                    Salarieds.add(New);
+                    Salaried_names.add(name1);
+                    Hourly_names.remove(name1);
+                    Hourlys.remove(worker_h);
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("Please, enter the Worker's new Commission: ");
+                    double commission = Double.parseDouble(input.nextLine());
+
+                    Commissioned New = new Commissioned(name1, address, fixed_weekly_salary, commission, systemID, syndicate, method, Agendas.get(2), syndicateID, fee);
+                    Commissioneds.add(New);
+                    Commissioned_names.add(name1);
+                    Hourly_names.remove(name1);
+                    Hourlys.remove(worker_h);
+                }
+            }
+
+            if(test == 2)
+            {
+                if(worker_s.getWorked_days() != 0)
+                {
+                    System.out.print("\nThe Worker must be payed before change his type!\n");
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                System.out.print("\nWorker is a Salaried Worker, change to:\n");
+                System.out.print("1 - Hourly\n");
+                System.out.print("2 - Commissioned\n");
+                int change = Integer.parseInt(input.nextLine());
+
+                String name1 = worker_s.getName();
+                String address = worker_s.getAddress();
+                String method = worker_s.getMethod();
+                int systemID = worker_s.getSystemID();
+                boolean syndicate = worker_s.getSyndicate();
+                int syndicateID = worker_s.getSyndicateID();
+                double fee = worker_s.getUnion_fee();
+
+                if(change == 1)
+                {
+                    System.out.print("Please, enter the Worker's new Salary: ");
+                    double salary = Double.parseDouble(input.nextLine());
+
+                    Hourly New = new Hourly(name1, address, salary, systemID, method, syndicate, Agendas.get(1), syndicateID, fee);
+                    Hourlys.add(New);
+                    Hourly_names.add(name1);
+                    Salaried_names.remove(name1);
+                    Salarieds.remove(worker_s);
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("Please, enter the Worker's new Commission: ");
+                    double commission = Double.parseDouble(input.nextLine());
+
+                    Commissioned New = new Commissioned(name1, address, fixed_weekly_salary, commission, systemID, syndicate, method, Agendas.get(2), syndicateID, fee);
+                    Commissioneds.add(New);
+                    Commissioned_names.add(name1);
+                    Salaried_names.remove(name1);
+                    Salarieds.remove(worker_s);
+                }
+            }
+
+            if(test == 3)
+            {
+                if(worker_s.getWorked_days() != 0)
+                {
+                    System.out.print("\nThe Worker must be payed before change his type!\n");
+                    System.out.print("\nReturning to the Main Menu!\n");
+                    return;
+                }
+
+                System.out.print("\nWorker is a Commissioned Worker, change to:\n");
+                System.out.print("1 - Hourly\n");
+                System.out.print("2 - Salaried\n");
+                int change = Integer.parseInt(input.nextLine());
+
+                String name1 = worker_c.getName();
+                String address = worker_c.getAddress();
+                String method = worker_c.getMethod();
+                int systemID = worker_c.getSystemID();
+                boolean syndicate = worker_c.getSyndicate();
+                int syndicateID = worker_c.getSyndicateID();
+                double fee = worker_c.getUnion_fee();
+
+                if(change == 1)
+                {
+                    System.out.print("Please, enter the Worker's new Salary: ");
+                    double salary = Double.parseDouble(input.nextLine());
+
+                    Hourly New = new Hourly(name1, address, salary, systemID, method, syndicate, Agendas.get(1), syndicateID, fee);
+                    Hourlys.add(New);
+                    Hourly_names.add(name1);
+                    Commissioned_names.remove(name1);
+                    Commissioneds.remove(worker_c);
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("Please, enter the Worker's new Salary: ");
+                    double salary = Double.parseDouble(input.nextLine());
+
+                    Salaried New = new Salaried(name1, address, salary, systemID, method, syndicate, Agendas.get(0), syndicateID, fee);
+                    Salarieds.add(New);
+                    Salaried_names.add(name1);
+                    Commissioned_names.remove(name1);
+                    Commissioneds.remove(worker_c);
+                }
+            }
+
+            System.out.print("\nInformation Changed!\n");
+        }
+
+        if(op == 4)
+        {
+            System.out.print("Please, enter the Worker's new Payment Method:\n");
+            System.out.print("1 - Paycheck by post office\n");
+            System.out.print("2 - Paycheck in hands\n");
+            System.out.print("3 - Bank account deposit\n");
+            int new_payment_method = Integer.parseInt(input.nextLine());
+
+            if(test == 1) worker_h.setMethod(new_payment_method);
+            if(test == 2) worker_s.setMethod(new_payment_method);
+            if(test == 3) worker_c.setMethod(new_payment_method);
+
+            System.out.print("\nInformation Changed!\n");
+        }
+
+        if(op == 5)
+        {
+            if(test == 1)
+            {
+                boolean x = worker_h.getSyndicate();
+                if(x)
+                {
+                    System.out.print("\nWorker is a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_h.setSyndicate(false);
+                        worker_h.setSydicate_ID(0);
+                        worker_h.setUnion_fee(0);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+
+                else
+                {
+                    System.out.print("\nWorker isn't a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_h.setSyndicate(true);
+                        System.out.print("\nPlease, enter the Worker's Syndicate ID: ");
+                        int ID = Integer.parseInt(input.nextLine());
+
+                        System.out.print("Please, enter the Worker's Union Fee: ");
+                        double fee = Double.parseDouble(input.nextLine());
+
+                        worker_h.setSydicate_ID(ID);
+                        worker_h.setUnion_fee(fee);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+            }
+
+            if(test == 2)
+            {
+                boolean x = worker_s.getSyndicate();
+                if(x)
+                {
+                    System.out.print("\nWorker is a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_s.setSyndicate(false);
+                        worker_s.setSydicate_ID(0);
+                        worker_s.setUnion_fee(0);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+
+                else
+                {
+                    System.out.print("\nWorker isn't a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_s.setSyndicate(true);
+                        System.out.print("\nPlease, enter the Worker's Syndicate ID: ");
+                        int ID = Integer.parseInt(input.nextLine());
+
+                        System.out.print("Please, enter the Worker's Union Fee: ");
+                        double fee = Double.parseDouble(input.nextLine());
+
+                        worker_s.setSydicate_ID(ID);
+                        worker_s.setUnion_fee(fee);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+            }
+
+            if(test == 3)
+            {
+                boolean x = worker_c.getSyndicate();
+                if(x)
+                {
+                    System.out.print("\nWorker is a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_c.setSyndicate(false);
+                        worker_c.setSydicate_ID(0);
+                        worker_c.setUnion_fee(0);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+
+                else
+                {
+                    System.out.print("\nWorker isn't a Union Member!\n");
+                    System.out.print("Want to change it?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    int change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1)
+                    {
+                        worker_c.setSyndicate(true);
+                        System.out.print("\nPlease, enter the Worker's Syndicate ID: ");
+                        int ID = Integer.parseInt(input.nextLine());
+
+                        System.out.print("Please, enter the Worker's Union Fee: ");
+                        double fee = Double.parseDouble(input.nextLine());
+
+                        worker_c.setSydicate_ID(ID);
+                        worker_c.setUnion_fee(fee);
+
+                        System.out.print("\nInformation Changed!\n");
+                    }
+                }
+            }
+        }
+
+        if(op == 6)
+        {
+            System.out.print("\nPlease, enter the Worker's new Syndicate ID: ");
+            int ID = Integer.parseInt(input.nextLine());
+
+            if(test == 1) worker_h.setSydicate_ID(ID);
+            if(test == 2) worker_s.setSydicate_ID(ID);
+            if(test == 3) worker_c.setSydicate_ID(ID);
+
+            System.out.print("\nInformation Changed!\n");
+        }
+
+        if(op == 7)
+        {
+            System.out.print("Please, enter the Worker's new Union Fee: ");
+            double fee = Double.parseDouble(input.nextLine());
+
+            if (test == 1) worker_h.setUnion_fee(fee);
+            if (test == 2) worker_s.setUnion_fee(fee);
+            if (test == 3) worker_c.setUnion_fee(fee);
+
+            System.out.print("\nInformation Changed!\n");
+        }
+
+        System.out.print("\nReturning to the Main Menu!\n");
     }
 
     public int tryAgain()
@@ -604,4 +1050,249 @@ public class DataCenter {
             }
         }
     }
+
+    public void ChangeAgenda()
+    {
+        System.out.print("Please, enter the Worker's name: ");
+        String name = input.nextLine();
+        int reop = 1;
+
+        while(!Workers_names.contains(name) && reop == 1)
+        {
+            System.out.print("\nWorker not found!\n");
+            reop = this.tryAgain();
+
+            if(reop == 1)
+            {
+                System.out.print("Please, enter the Worker's name: ");
+                name = input.nextLine();
+            }
+        }
+
+        if(reop == 2)
+        {
+            System.out.print("\nReturning to the main menu!\n");
+            return;
+        }
+
+        int index;
+
+        if(Hourly_names.contains(name))
+        {
+            index = Hourly_names.indexOf(name);
+            Hourly worker = Hourlys.get(index);
+
+            if(worker.getWorked_days() > 0)
+            {
+                System.out.print("\nThe Worker must be payed before change his Payment Schedule!\n");
+                System.out.print("\nReturning to the main menu!\n");
+                return;
+            }
+
+            else
+            {
+                int i, change = 0;
+
+                System.out.print("\nWant to change to the:\n");
+
+                for(i=0; i<Agendas.size(); i++)
+                {
+                    System.out.print( Agendas.get(i).getName() + " Payment Schedule?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1) break;
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("\nReturning to the main menu!\n");
+                    return;
+                }
+
+                PaymentSchedule newAgenda = Agendas.get(i);
+
+                worker.setAgenda(newAgenda);
+
+                System.out.print("\nPayment Schedule Changed!\n");
+                System.out.print("\nReturning to the main menu!\n");
+            }
+        }
+
+        if(Salaried_names.contains(name))
+        {
+            index = Salaried_names.indexOf(name);
+            Salaried worker = Salarieds.get(index);
+
+            if(worker.getWorked_days() > 0)
+            {
+                System.out.print("\nThe Worker must be payed before change his Payment Schedule!\n");
+                System.out.print("\nReturning to the main menu!\n");
+                return;
+            }
+
+            else
+            {
+                int i, change = 0;
+
+                System.out.print("\nWant to change to the:\n");
+
+                for(i=0; i<Agendas.size(); i++)
+                {
+                    System.out.print( Agendas.get(i).getName() + " Payment Schedule?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1) break;
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("\nReturning to the main menu!\n");
+                    return;
+                }
+
+                PaymentSchedule newAgenda = Agendas.get(i);
+                worker.setAgenda(newAgenda);
+
+                System.out.print("\nPayment Schedule Changed!\n");
+                System.out.print("\nReturning to the main menu!\n");
+            }
+        }
+
+        if(Commissioned_names.contains(name))
+        {
+            index = Commissioned_names.indexOf(name);
+            Commissioned worker = Commissioneds.get(index);
+
+            if(worker.getWorked_days() > 0)
+            {
+                System.out.print("\nThe Worker must be payed before change his Payment Schedule!\n");
+                System.out.print("\nReturning to the main menu!\n");
+                return;
+            }
+
+            else
+            {
+                int i, change = 0;
+
+                System.out.print("\nWant to change to the:\n");
+
+                for(i=0; i<Agendas.size(); i++)
+                {
+                    System.out.print( Agendas.get(i).getName() + " Payment Schedule?\n");
+                    System.out.print("Press 1 to Yes or 2 to No\n");
+                    change = Integer.parseInt(input.nextLine());
+
+                    if(change == 1) break;
+                }
+
+                if(change == 2)
+                {
+                    System.out.print("\nReturning to the main menu!\n");
+                    return;
+                }
+
+                PaymentSchedule newAgenda = Agendas.get(i);
+                worker.setAgenda(newAgenda);
+
+                System.out.print("\nPayment Schedule Changed!\n");
+                System.out.print("\nReturning to the main menu!\n");
+            }
+        }
+    }
+
+    public void CreateAgenda()
+    {
+        System.out.print("\nPlease, enter the Payment Schedule title: ");
+        String title = input.nextLine();
+
+        System.out.print("Please, enter the amount of days that need to be worked before be payed: ");
+        int until_be_payed = Integer.parseInt(input.nextLine());
+
+        System.out.print("Please, enter the payday day of the week (from 2 to 6): ");
+        int payday = Integer.parseInt(input.nextLine());
+
+        PaymentSchedule newAgenda = new PaymentSchedule(title, until_be_payed, payday);
+
+        Agendas.add(newAgenda);
+
+        System.out.print("\nPayment Schedule Created!\n");
+        System.out.print("\nReturning to the Main Menu!\n");
+    }
+
+    public void remove_salaried(Salaried x)
+    {
+        String name = x.getName();
+        Salarieds.remove(x);
+        Salaried_names.remove(name);
+        Workers_names.remove(name);
+    }
+
+    public void remove_commissioned(Commissioned x)
+    {
+        String name = x.getName();
+        Commissioneds.remove(x);
+        Commissioned_names.remove(name);
+        Workers_names.remove(name);
+    }
+
+    public void add_hourly(Hourly x)
+    {
+        String name = x.getName();
+        Hourlys.add(x);
+        Hourly_names.add(name);
+        Workers_names.add(name);
+    }
+
+    public void add_salaried(Salaried x)
+    {
+        String name = x.getName();
+        Salarieds.add(x);
+        Salaried_names.add(name);
+        Workers_names.add(name);
+    }
+
+    public void add_commissioned(Commissioned x)
+    {
+        String name = x.getName();
+        Commissioneds.add(x);
+        Commissioned_names.add(name);
+        Workers_names.add(name);
+    }
+
+    public void remove_tc(TimeCard x)
+    {
+        Hourly worker = x.getWorker();
+        worker.removeTC(x);
+    }
+
+    public void remove_sale(Sale sale)
+    {
+        Commissioned worker = sale.getWorker();
+        worker.removeSale(sale);
+    }
+
+    public void setHourly(Hourly worker)
+    {
+        String name = worker.getName();
+        int index = Hourly_names.indexOf(name);
+        Hourlys.set(index, worker);
+    }
+
+    public void setSalaried(Salaried worker)
+    {
+        String name = worker.getName();
+        int index = Salaried_names.indexOf(name);
+        Salarieds.set(index, worker);
+    }
+
+
+    public void setCommissioned(Commissioned worker)
+    {
+        String name = worker.getName();
+        int index = Commissioned_names.indexOf(name);
+        Commissioneds.set(index, worker);
+    }
 }
+

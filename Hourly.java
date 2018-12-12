@@ -1,3 +1,4 @@
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,6 +18,40 @@ public class Hourly {
     private int worked_days;
 
     private Scanner input = new Scanner(System.in);
+
+    public Hourly()
+    {
+
+    }
+
+    public Hourly(String name, String Address, double salary, int system_ID, String payment_method, boolean syndicate, int sydicate_ID, double union_fee, PaymentSchedule agenda, ArrayList<TimeCard> timecards, int worker_days)
+    {
+        this.name = name;
+        this.Address = Address;
+        this.salary = salary;
+        this.system_ID = system_ID;
+        this.payment_method = payment_method;
+        this.syndicate = syndicate;
+        this.sydicate_ID = sydicate_ID;
+        this.union_fee = union_fee;
+        this.agenda = agenda;
+        this.timecards = timecards;
+        this.worked_days = worker_days;
+    }
+
+    public Hourly(String name, String Address, double salary, int system_ID, String payment_method, boolean syndicate, PaymentSchedule agenda, int sydicate_ID, double union_fee)
+    {
+        this.name = name;
+        this.Address = Address;
+        this.salary = salary;
+        this.system_ID = system_ID;
+        this.payment_method = payment_method;
+        this.syndicate = syndicate;
+        this.sydicate_ID = sydicate_ID;
+        this.union_fee = union_fee;
+        this.agenda = agenda;
+        this.worked_days = 0;
+    }
 
     public Hourly(String name, String Address, double salary, int system_ID, int payment_method, int syndicate, PaymentSchedule agenda)
     {
@@ -123,5 +158,77 @@ public class Hourly {
     public String getMethod()
     {
         return payment_method;
+    }
+
+    public int getWorkerDays()
+    {
+        return worked_days;
+    }
+
+    public void setAgenda(PaymentSchedule x)
+    {
+        this.agenda = x;
+    }
+
+    public void setName(String x)
+    {
+        this.name = x;
+    }
+
+    public void setAddress(String x)
+    {
+        this.Address = x;
+    }
+
+    public void setMethod(int payment_method)
+    {
+        if(payment_method == 1) this.payment_method = "Cheque pelos correios";
+        else if(payment_method == 2) this.payment_method = "Cheque em mãos";
+        else if(payment_method == 3) this.payment_method = "Deposito em conta bancaria";
+    }
+
+    public void setSyndicate(boolean x)
+    {
+        this.syndicate = x;
+    }
+
+    public void setUnion_fee(double x)
+    {
+        this.union_fee = x;
+    }
+
+    public void setSydicate_ID(int x)
+    {
+        this.sydicate_ID = x;
+    }
+
+    public String getAddress()
+    {
+        return this.Address;
+    }
+
+    public int getSystemID()
+    {
+        return this.system_ID;
+    }
+
+    public double getUnion_fee()
+    {
+        return this.union_fee;
+    }
+
+    public void removeTC(TimeCard x)
+    {
+        timecards.remove(x);
+    }
+
+    public void setWorkedDays(int x)
+    {
+        this.worked_days = x;
+    }
+
+    public ArrayList<TimeCard> getTC()
+    {
+        return timecards;
     }
 }

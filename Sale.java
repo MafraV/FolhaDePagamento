@@ -24,4 +24,9 @@ public class Sale {
     {
         return how_much_to_receive;
     }
+
+    public Commissioned getWorker()
+    {
+        return this.seller;
+    }
 }

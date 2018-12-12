@@ -19,6 +19,26 @@ public class Commissioned {
 
     private Scanner input = new Scanner(System.in);
 
+    public Commissioned()
+    {
+
+    }
+
+    public Commissioned(String name, String Address, double salary, double commission, int system_ID, boolean syndicate, String payment_method, PaymentSchedule agenda, int sydicate_ID, double union_fee)
+    {
+        this.name = name;
+        this.Address = Address;
+        this.salary = salary;
+        this.system_ID = system_ID;
+        this.commission = commission;
+        this.payment_method = payment_method;
+        this.syndicate = syndicate;
+        this.sydicate_ID = sydicate_ID;
+        this.union_fee = union_fee;
+        this.agenda = agenda;
+        worked_days = 0;
+    }
+
     public Commissioned(String name, String Address, double salary, double commission, int system_ID, int syndicate, int payment_method, PaymentSchedule agenda)
     {
         this.name = name;
@@ -104,7 +124,7 @@ public class Commissioned {
 
     public double Pay()
     {
-        double how_much = 2*salary;
+        double how_much = (worked_days/5)*salary;
 
         while(!Sales.isEmpty())
         {
@@ -119,5 +139,67 @@ public class Commissioned {
         if(!servicefees.isEmpty()) how_much = how_much - servicefees.get(0).getValue();
 
         return how_much;
+    }
+
+    public int getWorkerDays()
+    {
+        return worked_days;
+    }
+
+    public void setAgenda(PaymentSchedule x)
+    {
+        this.agenda = x;
+    }
+
+    public void setName(String x)
+    {
+        this.name = x;
+    }
+
+    public void setAddress(String x)
+    {
+        this.Address = x;
+    }
+
+    public void setMethod(int payment_method)
+    {
+        if(payment_method == 1) this.payment_method = "Cheque pelos correios";
+        else if(payment_method == 2) this.payment_method = "Cheque em mãos";
+        else if(payment_method == 3) this.payment_method = "Deposito em conta bancaria";
+    }
+
+    public void setSyndicate(boolean x)
+    {
+        this.syndicate = x;
+    }
+
+    public void setUnion_fee(double x)
+    {
+        this.union_fee = x;
+    }
+
+    public void setSydicate_ID(int x)
+    {
+        this.sydicate_ID = x;
+    }
+
+    public String getAddress()
+    {
+        return this.Address;
+    }
+
+    public int getSystemID()
+    {
+        return this.system_ID;
+    }
+
+    public double getUnion_fee()
+    {
+        return this.union_fee;
+    }
+
+    public void removeSale(Sale sale)
+    {
+        Sales.remove(sale);
     }
 }

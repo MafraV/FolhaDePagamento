@@ -43,4 +43,9 @@ public class TimeCard {
         return day;
     }
 
+    public Hourly getWorker()
+    {
+        return this.worker;
+    }
+
 }

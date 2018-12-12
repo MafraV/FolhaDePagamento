@@ -17,6 +17,25 @@ public class Salaried {
 
     private Scanner input = new Scanner(System.in);
 
+    public Salaried()
+    {
+
+    }
+
+    public Salaried(String name, String Address, double salary, int system_id, String payment_method, boolean syndicate, PaymentSchedule agenda, int sydicate_ID, double union_fee)
+    {
+        this.name = name;
+        this.Address = Address;
+        this.salary = salary;
+        this.system_ID = system_id;
+        this.syndicate = syndicate;
+        this.payment_method = payment_method;
+        this.sydicate_ID = sydicate_ID;
+        this.union_fee = union_fee;
+        this.agenda = agenda;
+        worked_days = 0;
+    }
+
     public Salaried(String name, String Address, double salary, int system_id, int payment_method, int syndicate, PaymentSchedule agenda)
     {
         this.name = name;
@@ -100,5 +119,62 @@ public class Salaried {
         if(!servicefees.isEmpty()) how_much = how_much - servicefees.get(0).getValue();
 
         return how_much;
+    }
+
+    public int getWorkerDays()
+    {
+        return worked_days;
+    }
+
+    public void setAgenda(PaymentSchedule x)
+    {
+        this.agenda = x;
+    }
+
+    public void setName(String x)
+    {
+        this.name = x;
+    }
+
+    public void setAddress(String x)
+    {
+        this.Address = x;
+    }
+
+    public void setMethod(int payment_method)
+    {
+        if(payment_method == 1) this.payment_method = "Cheque pelos correios";
+        else if(payment_method == 2) this.payment_method = "Cheque em mãos";
+        else if(payment_method == 3) this.payment_method = "Deposito em conta bancaria";
+    }
+
+    public void setSyndicate(boolean x)
+    {
+        this.syndicate = x;
+    }
+
+    public void setUnion_fee(double x)
+    {
+        this.union_fee = x;
+    }
+
+    public void setSydicate_ID(int x)
+    {
+        this.sydicate_ID = x;
+    }
+
+    public String getAddress()
+    {
+        return this.Address;
+    }
+
+    public int getSystemID()
+    {
+        return this.system_ID;
+    }
+
+    public double getUnion_fee()
+    {
+        return this.union_fee;
     }
 }
